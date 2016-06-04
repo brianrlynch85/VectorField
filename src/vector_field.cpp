@@ -4,7 +4,7 @@
  *                                   vector_field.cpp
  *                                        V 0.01
  *
- *                             (c) Brian Lynch October, 2015
+ *                              (c) Brian Lynch June, 2016
  *
  * ------------------------------------------------------------------------
  */
@@ -28,12 +28,9 @@ typedef struct p_vector{
    double vy;
 }p_vector;
 
-//Input filename
-static const char *filename = "data00400004.txt";
-
 //Dimensions of the image the data came from
-static const unsigned int xsize = 250;
-static const unsigned int ysize = 250;
+static const unsigned int xsize = 300;
+static const unsigned int ysize = 300;
 
 //Scale factor used to scale the arrow size
 const double scale = 0.05l;//2.75f;
@@ -52,9 +49,11 @@ static GLfloat *arrowtail_vertices;
 
 static unsigned int display_counter = 0U;
 
+void print_usage();
+
 /***************************************************************************************/
 //read_file function to populate velocity vector data
-void read_file(void){
+void read_file(const char *filename){
    
    FILE *infile;
    infile = fopen(filename, "r");
@@ -103,7 +102,7 @@ void read_file(void){
          
       }
       
-      //Convert the coordinates
+      //Convert to image coordinates
       par[q].xcm  = (2.0l * par[q].xcm / xsize) - 1.0l;
       par[q].ycm  = (2.0l * par[q].ycm / ysize) - 1.0l;
       par[q].ycm *= -1.0l;
@@ -386,9 +385,48 @@ void free_resources(){
 
 /***************************************************************************************/
 int main(int argc, char* argv[]){
-   
+
+   // Command line option parser variable
+   int opt = 0;
+
+   // Input filename
+   char *filename;
+
+   // Parse the command line
+   if(1 == argc){
+      
+      print_usage(); 
+      exit(EXIT_FAILURE);
+       
+   }
+      
+   while((opt = getopt(argc, argv,"-f:")) != -1) {
+     
+      switch (opt) {
+         
+         case 'f' : // Input filename option
+            
+            filename = optarg;
+            printf("Input Filename: %s \n", filename);
+            break;
+            
+         case '?': // Unrecognized command line option
+            
+            printf("Unrecognized command line option\n");
+            print_usage();
+            return (-1);
+            
+         case '\1': // The - in "-f:" finds non option command line params
+            
+            printf("Passed non-option to command line\n");
+            print_usage();
+            return (-1);
+            
+      }
+        
+   }
    //Read the data from file
-   read_file();
+   read_file(filename);
    
    //Initialize the GLUT library
    glutInit(&argc, argv);
@@ -397,7 +435,7 @@ int main(int argc, char* argv[]){
    glutInitDisplayMode(GLUT_RGB|GLUT_MULTISAMPLE|GLUT_DOUBLE);
    
    //Initialize window size and location
-   glutInitWindowSize(xsize/2,ysize/2);
+   glutInitWindowSize(xsize,ysize);
    glutInitWindowPosition(0,0);
    
    //Create the window and store the id number
@@ -426,5 +464,14 @@ int main(int argc, char* argv[]){
    //Free the resources
    free_resources();
    return 0;
+   
+}
+
+/************************************************************************/
+void print_usage(){
+   
+   printf("Usage:\n");
+   printf("build/bin/vector_field -f <filename>\n");
+   printf("build/bin/vector_field -f ExampleData/ExampleData.dat\n");
    
 }
