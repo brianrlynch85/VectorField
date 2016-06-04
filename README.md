@@ -1,11 +1,7 @@
-# --------------------------------------------------------
-#
-#                              README for VectorField
-#                                    V 0.01
-#
-#                          (c) Brian Lynch October, 2015
-#
-# --------------------------------------------------------
+README for VectorField
+======================
+(c) Brian Lynch June, 2016
+--------------------------
 
 This software was written for educational purposes. I wrote/hacked this 
 code while teaching myself a little bit about openGL. There may be
@@ -37,4 +33,4 @@ other operating systems.
    Now you have done and out of source build, which leaves the original
    source directories clean. Example calling command:
    
-      -"build/bin/vector_field"
+      -"build/bin/vector_field -f ExampleData/ExampleData.dat"
